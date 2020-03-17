@@ -4,11 +4,11 @@ class Chat {
 
     public function sendHeaders($headersText, $newSocket, $host, $port) {
         $headers = array();
-        $tmpLine = preg_split("/\r\n/",$headersText);
+        $tmpLine = preg_split("/\r\n/", $headersText);
 
         foreach($tmpLine as $line) {
             $line = rtrim($line);
-            if(preg_match('/\A(\S+): (.*)\z/',$line, $matches)) {
+            if(preg_match('/\A(\S+): (.*)\z/', $line, $matches)) {
                 $headers[$matches[1]] = $matches[2];
             }
         }
@@ -24,7 +24,7 @@ class Chat {
             "Sec-WebSocket-Accept:$sKey\r\n\r\n"
         ;
 
-        socket_write($newSocket,$strHeadr, strlen($strHeadr));
+        socket_write($newSocket, $strHeadr, strlen($strHeadr));
     }
 
     public function newConnectionACK($client_ip_address) {
@@ -56,7 +56,7 @@ class Chat {
     }
     
     
-    public function send($message,$clientSocketArray) {
+    public function send($message, $clientSocketArray) {
         $messageLength = strlen($message);
 
         foreach($clientSocketArray as $clientSocket) {
@@ -69,18 +69,17 @@ class Chat {
     public function unseal($socketData) {
         $length = ord($socketData[1]) & 127;
 
-
         if($length == 126) {
-            $mask = substr($socketData,4,4);
-            $data = substr($socketData,8);
+            $mask = substr($socketData, 4, 4);
+            $data = substr($socketData, 8);
         }
         else if($length == 127) {
-            $mask = substr($socketData,10, 4);
-            $data = substr($socketData,14);
+            $mask = substr($socketData, 10, 4);
+            $data = substr($socketData, 14);
         }
         else {
-            $mask = substr($socketData,2, 4);
-            $data = substr($socketData,6);
+            $mask = substr($socketData, 2, 4);
+            $data = substr($socketData, 6);
         }
 
         $socketStr = "";
@@ -95,7 +94,7 @@ class Chat {
     public function createChatMessage($username, $messageStr) {
         $message = $username . "<div>" . $messageStr . "</div>";
         $messageArray = [
-            'type' =>'chat-box',
+            'type' => 'chat-box',
             'message' => $message
         ];
 

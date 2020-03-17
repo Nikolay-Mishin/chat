@@ -1,5 +1,10 @@
 <?php
 
+// Подключаем библиотеку Workerman
+// \ishop\app\widgets\chat\SimpleChat-server\ChatWorker.php
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config/config.php';
+
 namespace app\widgets\chat;
 
 // Подключаем библиотеку Workerman
@@ -8,7 +13,7 @@ use Workerman\Worker;
 
 class ChatWorker {
 
-    public static $websocket = "websocket://0.0.0.0:27800";
+    public static $websocket = "websocket://".IP_LISTEN.":".PORT;
     public static $worker;
     public static $connections = []; // сюда будем складывать все подключения
 
@@ -235,3 +240,5 @@ class ChatWorker {
     }
 
 }
+
+ChatWorker::run();

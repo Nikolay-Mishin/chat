@@ -2,8 +2,13 @@ function message(text) {
 	$('#chat-result').append(text);
 }
 
+console.log(Config);
+const { PORT, HOST, IP_LISTEN } = Config;
+console.log(PORT, HOST, IP_LISTEN);
+
 $(document).ready(function($) {
-	var socket = new WebSocket("ws://chat:8090/WebForMyself/server.php");
+	var server = "ws://chat:8090/WebForMyself/server.php",
+		socket = new WebSocket(server);
 
 	socket.onopen = function() {
 		message("<div>Соединение установлено</div>");

@@ -4,7 +4,6 @@ function message(text) {
 
 console.log(Config);
 const { PORT, HOST, IP_LISTEN } = Config;
-console.log(PORT, HOST, IP_LISTEN);
 
 $(document).ready(function($) {
 	var server = "ws://chat:8090/WebForMyself/server.php",

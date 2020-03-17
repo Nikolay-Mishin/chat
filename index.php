@@ -17,11 +17,8 @@
 
     <? require_once __DIR__ . '/config/config.php'; ?>
     <script>
-        const Config = {
-            PORT: '<?=PORT;?>',
-            HOST: '<?=HOST;?>',
-            IP_LISTEN: '<?=IP_LISTEN;?>'
-        };
+        const Config = <?= json_encode(get_defined_constants(true)['user']); ?>;
+        Object.freeze(Config); // замораживает объект
     </script>
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="js/script.js"></script>

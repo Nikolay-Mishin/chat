@@ -1,4 +1,3 @@
-
 function message(text) {
 	$('#chat-result').append(text);
 }

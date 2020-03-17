@@ -12,7 +12,8 @@ $connections = []; // сюда будем складывать все подкл
 // Стартуем WebSocket-сервер на порту 27800
 $worker = new Worker("websocket://0.0.0.0:27800");
 
-$worker->onWorkerStart = function($worker) use (&$connections) {
+$worker->onWorkerStart = function($worker) use (&$connections)
+{
     $interval = 5; // пингуем каждые 5 секунд
     Timer::add($interval, function() use(&$connections) {
         foreach ($connections as $c) {
@@ -44,9 +45,11 @@ $worker->onWorkerStart = function($worker) use (&$connections) {
     });
 };
 
-$worker->onConnect = function($connection) use(&$connections) {
+$worker->onConnect = function($connection) use(&$connections)
+{
     // Эта функция выполняется при подключении пользователя к WebSocket-серверу
-    $connection->onWebSocketConnect = function($connection) use (&$connections) {
+    $connection->onWebSocketConnect = function($connection) use (&$connections)
+    {
         // Достаём имя пользователя, если оно было указано
         if (isset($_GET['userName'])) {
             $originalUserName = preg_replace('/[^a-zA-Zа-яА-ЯёЁ0-9\-\_ ]/u', '', trim($_GET['userName']));
@@ -140,7 +143,8 @@ $worker->onConnect = function($connection) use(&$connections) {
     };
 };
 
-$worker->onClose = function($connection) use(&$connections) {
+$worker->onClose = function($connection) use(&$connections)
+{
     // Эта функция выполняется при закрытии соединения
     if (!isset($connections[$connection->id])) {
         return;
@@ -164,7 +168,8 @@ $worker->onClose = function($connection) use(&$connections) {
     }
 };
 
-$worker->onMessage = function($connection, $message) use (&$connections) {
+$worker->onMessage = function($connection, $message) use (&$connections)
+{
     $messageData = json_decode($message, true);
     $toUserId = isset($messageData['toUserId']) ? (int) $messageData['toUserId'] : 0;
     $action = isset($messageData['action']) ? $messageData['action'] : '';

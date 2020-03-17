@@ -11,7 +11,7 @@ use Workerman\Worker;
 $connections = []; // сюда будем складывать все подключения
 
 // Стартуем WebSocket-сервер на порту 8090
-$worker = new Worker("websocket://".IP_LISTEN.":".PORT);
+$worker = new Worker(PROTOCOL."://".IP_LISTEN.":".PORT);
 
 $worker->onWorkerStart = function($worker) use (&$connections)
 {

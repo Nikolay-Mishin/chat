@@ -1,0 +1,24 @@
+@import '~bootstrap/scss/bootstrap';
+
+#chatbox{
+  overflow-y: scroll;
+  height: 80vh;
+}
+
+#chatbox div{
+  overflow: hidden;
+}
+
+#chatbox div span{
+  word-break: break-all;
+}
+
+#users-table {
+  width: 100%;
+  border-spacing: 7px 5px;
+}
+
+#users-table td {
+  border: 0.1px solid #333;
+  padding: 5px;
+}

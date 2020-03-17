@@ -12,27 +12,26 @@ class ChatWorker {
     public static $worker;
     public static $connections = []; // сюда будем складывать все подключения
 
-    public static function start(){
+    public static function start() {
         // Стартуем WebSocket-сервер на порту 27800
         self::$worker = new Worker(self::$websocket);
-        debug(self::$worker);
+        //debug(self::$worker);
     }
 
-    public static function run(){
+    public static function run() {
         self::start();
-        //self::onWorkerStart(self::$connections);
-        //self::onConnect(self::$connections);
-        //self::onClose(self::$connections);
-        //self::onMessage(self::$connections);
-        debug(self::$connections);
+        self::onWorkerStart(self::$connections);
+        self::onConnect(self::$connections);
+        self::onClose(self::$connections);
+        self::onMessage(self::$connections);
         Worker::runAll();
-        debug(self::$worker);
-        debug(self::$connections);
+        //debug(self::$connections);
+        //debug(self::$worker);
+        //debug(self::$connections);
     }
 
-    public static function onWorkerStart(&$connections){
-        self::$worker->onWorkerStart = function($worker) use (&$connections)
-        {
+    public static function onWorkerStart(&$connections) {
+        self::$worker->onWorkerStart = function($worker) use (&$connections) {
             $interval = 5; // пингуем каждые 5 секунд
             Timer::add($interval, function() use(&$connections) {
                 foreach ($connections as $c) {
@@ -65,12 +64,10 @@ class ChatWorker {
         };
     }
 
-    public static function onConnect(&$connections){
-        self::$worker->onConnect = function($connection) use(&$connections)
-        {
+    public static function onConnect(&$connections) {
+        self::$worker->onConnect = function($connection) use(&$connections) {
             // Эта функция выполняется при подключении пользователя к WebSocket-серверу
-            $connection->onWebSocketConnect = function($connection) use (&$connections)
-            {
+            $connection->onWebSocketConnect = function($connection) use (&$connections) {
                 // Достаём имя пользователя, если оно было указано
                 if (isset($_GET['userName'])) {
                     $originalUserName = preg_replace('/[^a-zA-Zа-яА-ЯёЁ0-9\-\_ ]/u', '', trim($_GET['userName']));
@@ -165,9 +162,8 @@ class ChatWorker {
         };
     }
 
-    public static function onClose(&$connections){
-        self::$worker->onClose = function($connection) use(&$connections)
-        {
+    public static function onClose(&$connections) {
+        self::$worker->onClose = function($connection) use(&$connections) {
             // Эта функция выполняется при закрытии соединения
             if (!isset($connections[$connection->id])) {
                 return;
@@ -192,9 +188,8 @@ class ChatWorker {
         };
     }
 
-    public static function onMessage(&$connections){
-        self::$worker->onMessage = function($connection, $message) use (&$connections)
-        {
+    public static function onMessage(&$connections) {
+        self::$worker->onMessage = function($connection, $message) use (&$connections) {
             $messageData = json_decode($message, true);
             $toUserId = isset($messageData['toUserId']) ? (int) $messageData['toUserId'] : 0;
             $action = isset($messageData['action']) ? $messageData['action'] : '';

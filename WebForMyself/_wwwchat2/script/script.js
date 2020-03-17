@@ -1,10 +1,9 @@
 
 function message(text) {
-    jQuery('#chat-result').append(text);
+    $('#chat-result').append(text);
 }
 
-jQuery(document).ready(function($) {
-
+$(document).ready(function($) {
     var socket = new WebSocket("ws://localhost:8090/chat/server.php");
 
     socket.onopen = function() {

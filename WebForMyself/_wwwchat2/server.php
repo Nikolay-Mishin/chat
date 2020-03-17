@@ -1,7 +1,6 @@
 <?php
 define('PORT',"8090");
 
-
 require_once ("classes/chat.php");
 
 $chat = new Chat();
@@ -16,7 +15,6 @@ socket_listen($socket);
 $clientSocketArray = array($socket);
 
 while(true) {
-
     $newSocketArray = $clientSocketArray;
     $nullA = [];
     socket_select($newSocketArray,$nullA, $nullA,0,10);
@@ -31,11 +29,7 @@ while(true) {
         socket_getpeername($newSocket, $client_ip_address);
         $connectionACK = $chat->newConnectionACK($client_ip_address);
         $chat->send($connectionACK,$clientSocketArray);
-
     }
-    
-
 }
-
 
 socket_close($socket);

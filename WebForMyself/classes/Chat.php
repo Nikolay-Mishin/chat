@@ -1,16 +1,16 @@
 <?php
 
-class Chat 
-{
+class Chat {
+
     public function sendHeaders($headersText, $newSocket, $host, $port) {
         $headers = array();
         $tmpLine = preg_split("/\r\n/",$headersText);
 
         foreach($tmpLine as $line) {
-                $line = rtrim($line);
-                if(preg_match('/\A(\S+): (.*)\z/',$line, $matches)) {
-                    $headers[$matches[1]] = $matches[2];
-                }
+            $line = rtrim($line);
+            if(preg_match('/\A(\S+): (.*)\z/',$line, $matches)) {
+                $headers[$matches[1]] = $matches[2];
+            }
         }
 
         $key = $headers['Sec-WebSocket-Key'];
@@ -25,7 +25,6 @@ class Chat
         ;
 
         socket_write($newSocket,$strHeadr, strlen($strHeadr));
-
     }
 
     public function newConnectionACK($client_ip_address) {
@@ -54,7 +53,6 @@ class Chat
         }
 
         return $header.$socketData;
-
     }
     
     
@@ -69,7 +67,6 @@ class Chat
     }
 
     public function unseal($socketData) {
-
         $length = ord($socketData[1]) & 127;
 
 
@@ -93,11 +90,9 @@ class Chat
         }
 
         return $socketStr;
-
     }
 
     public function createChatMessage($username, $messageStr) {
-
         $message = $username . "<div>" . $messageStr . "</div>";
         $messageArray = [
             'type' =>'chat-box',
@@ -105,7 +100,6 @@ class Chat
         ];
 
         return $this->seal(json_encode($messageArray));
-
     }
 
     public function newDisconectedACK($client_ip_address) {

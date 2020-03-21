@@ -6,7 +6,6 @@
 	},
 	"require": {
 		"workerman/workerman": "^3.5",
-		"cboden/ratchet": "0.3.*"
-		//"cboden/ratchet": "^0.4.2"
+		"cboden/ratchet": "^0.4.2"
 	}
 }

@@ -24,6 +24,7 @@ $(document).ready(function($) {
 	socket.onmessage = function(event) {
 		var data = JSON.parse(event.data);
 		message("<div>" + data.type + " - " + data.message + "</div>");
+		console.log(data);
 	}
 
 	$("#chat").on('submit',function() {

@@ -3,10 +3,11 @@ function message(text) {
 }
 
 console.log(Config);
-const { PROTOCOL, HOST, IP_LISTEN, PORT, SERVER } = Config;
+const { PROTOCOL, HOST, PORT, IP_LISTEN, SERVER } = Config;
 
 $(document).ready(function($) {
-	var server = "ws://chat:8090/WebForMyself/server.php",
+	//var server = "ws://chat:8090/WebForMyself/server.php",
+	var server = `ws://${HOST}:${PORT}/${SERVER}`,
 		socket = new WebSocket(server);
 
 	socket.onopen = function() {
@@ -23,7 +24,7 @@ $(document).ready(function($) {
 
 	socket.onmessage = function(event) {
 		var data = JSON.parse(event.data);
-		message("<div>" + data.type + " - " + data.message + "</div>");
+		message("<div>" + data.action + " - " + data.message + "</div>");
 		console.log(data);
 	}
 
@@ -33,7 +34,7 @@ $(document).ready(function($) {
 			chat_user:$("#chat-user").val(),
 		};
 
-		$("#chat-user").attr("type","hidden");
+		$("#chat-user").attr("type", "hidden");
 
 		socket.send(JSON.stringify(message));
 

@@ -38,7 +38,7 @@ class Chat {
     public function newConnectionACK($client_ip_address) {
         $message = "New client " . $client_ip_address . " connected";
         //$messageArray = [
-        //    "type" => "newConnectionACK",
+        //    "action" => "newConnectionACK",
         //    "message" => $message
         //];
         //return $this->seal(json_encode($messageArray));
@@ -48,7 +48,7 @@ class Chat {
     public function createChatMessage($username, $messageStr) {
         $message = $username . "<div>" . $messageStr . "</div>";
         //$messageArray = [
-        //    "type" => "chat-box",
+        //    "action" => "chat-box",
         //    "message" => $message
         //];
         //return $this->seal(json_encode($messageArray));
@@ -58,16 +58,16 @@ class Chat {
     public function newDisconectedACK($client_ip_address) {
         $message = "Client " . $client_ip_address . " disconnected";
         //$messageArray = [
-        //    "type" => "newDisconnectionACK",
+        //    "action" => "newDisconnectionACK",
         //    "message" => $message
         //];
         //return $this->seal(json_encode($messageArray));
         return $this->createMessage("newDisconnectionACK", $message);
     }
 
-    public function createMessage($type, $message) {
+    public function createMessage($action, $message) {
         $messageArray = [
-            "type" => $type,
+            "action" => $action,
             "message" => $message
         ];
         return $this->seal(json_encode($messageArray));

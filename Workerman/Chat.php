@@ -1,6 +1,6 @@
 <?php
 
-namespace chat;
+namespace worker;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -10,7 +10,7 @@ use Workerman\Worker;
 
 require_once __DIR__ . '/../config/config.php';
 
-class ChatWorker {
+class Chat {
 
     public static $websocket = PROTOCOL."://".IP_LISTEN.":".PORT;
     public static $worker;

@@ -1,9 +1,9 @@
 <?php
 
-namespace chat;
+namespace worker;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use chat\ChatWorker;
+use worker\Chat;
 
-ChatWorker::run();
+Chat::run();

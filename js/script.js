@@ -2,7 +2,9 @@ function message(text) {
 	$('#chat-result').append(text);
 }
 
-function send(message) {
+function send(action, message = {}) {
+	message = Object.assign({ action: action }, message);
+	console.log('send \n', message);
 	send.socket.send(JSON.stringify(message));
 }
 
@@ -11,7 +13,7 @@ const { PROTOCOL, HOST, PORT, IP_LISTEN, SERVER } = Config;
 
 $(document).ready(function($) {
 	//var server = "ws://chat:8090/WebForMyself/server.php",
-	var server = `ws://${HOST}:${PORT}/${SERVER}`,
+	var server = `ws://${HOST}:${PORT}`,
 		socket = new WebSocket(server);
 
 	send.socket = socket;
@@ -32,6 +34,9 @@ $(document).ready(function($) {
 		var data = JSON.parse(event.data);
 		message("<div>" + data.action + " - " + data.message + "</div>");
 		console.log(data);
+		if (data.action == 'Ping') {
+			//send('Pong');
+		}
 	}
 
 	$("#chat").on('submit', function() {

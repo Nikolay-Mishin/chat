@@ -2,7 +2,7 @@
 	"autoload": {
 		"psr-4": {
 			"MyApp\\": "Ratchet/src",
-			"chat\\": "Workerman"
+			"worker\\": "Workerman"
 		}
 	},
 	"require": {

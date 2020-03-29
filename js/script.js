@@ -2,6 +2,10 @@ function message(text) {
 	$('#chat-result').append(text);
 }
 
+function send(message) {
+	send.socket.send(JSON.stringify(message));
+}
+
 console.log(Config);
 const { PROTOCOL, HOST, PORT, IP_LISTEN, SERVER } = Config;
 
@@ -9,6 +13,8 @@ $(document).ready(function($) {
 	//var server = "ws://chat:8090/WebForMyself/server.php",
 	var server = `ws://${HOST}:${PORT}/${SERVER}`,
 		socket = new WebSocket(server);
+
+	send.socket = socket;
 
 	socket.onopen = function() {
 		message("<div>Соединение установлено</div>");
@@ -28,15 +34,16 @@ $(document).ready(function($) {
 		console.log(data);
 	}
 
-	$("#chat").on('submit',function() {
+	$("#chat").on('submit', function() {
 		var message = {
-			chat_message:$("#chat-message").val(),
-			chat_user:$("#chat-user").val(),
+			chat_message: $("#chat-message").val(),
+			chat_user: $("#chat-user").val()
 		};
 
 		$("#chat-user").attr("type", "hidden");
 
-		socket.send(JSON.stringify(message));
+		//socket.send(JSON.stringify(message));
+		send(message);
 
 		return false;
 	});

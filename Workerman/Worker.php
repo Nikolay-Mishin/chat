@@ -1,11 +1,11 @@
 <?php
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
+// Подключаем библиотеку Workerman
 use Workerman\Lib\Timer;
 use Workerman\Worker;
 
-// Подключаем библиотеку Workerman
-// \ishop\app\widgets\chat\SimpleChat-server\ChatWorker.php
-require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../config/config.php';
 
 $connections = []; // сюда будем складывать все подключения

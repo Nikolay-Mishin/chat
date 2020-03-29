@@ -17,6 +17,10 @@ class ComposerStaticInit0dabf51485c17910d99e5a88c66a2ed6
     );
 
     public static $prefixLengthsPsr4 = array (
+        'c' => 
+        array (
+            'chat\\' => 5,
+        ),
         'W' => 
         array (
             'Workerman\\' => 10,
@@ -46,6 +50,10 @@ class ComposerStaticInit0dabf51485c17910d99e5a88c66a2ed6
         array (
             'Psr\\Http\\Message\\' => 17,
         ),
+        'M' => 
+        array (
+            'MyApp\\' => 6,
+        ),
         'G' => 
         array (
             'GuzzleHttp\\Psr7\\' => 16,
@@ -53,6 +61,10 @@ class ComposerStaticInit0dabf51485c17910d99e5a88c66a2ed6
     );
 
     public static $prefixDirsPsr4 = array (
+        'chat\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Workerman',
+        ),
         'Workerman\\' => 
         array (
             0 => __DIR__ . '/..' . '/workerman/workerman',
@@ -121,6 +133,10 @@ class ComposerStaticInit0dabf51485c17910d99e5a88c66a2ed6
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
+        'MyApp\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Ratchet/src',
+        ),
         'GuzzleHttp\\Psr7\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
@@ -128,13 +144,6 @@ class ComposerStaticInit0dabf51485c17910d99e5a88c66a2ed6
     );
 
     public static $prefixesPsr0 = array (
-        'M' => 
-        array (
-            'MyApp' => 
-            array (
-                0 => __DIR__ . '/../..' . '/src',
-            ),
-        ),
         'E' => 
         array (
             'Evenement' => 

@@ -1,26 +1,23 @@
 <?php
 
-namespace Workerman;
+namespace chat;
+
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // Подключаем библиотеку Workerman
 use Workerman\Lib\Timer;
 use Workerman\Worker;
 
-// Подключаем библиотеку Workerman
-// \ishop\app\widgets\chat\SimpleChat-server\ChatWorker.php
-require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../config/config.php';
 
 class ChatWorker {
 
-    public static $websocket = "websocket://".IP_LISTEN.":".PORT;
+    public static $websocket = PROTOCOL."://".IP_LISTEN.":".PORT;
     public static $worker;
     public static $connections = []; // сюда будем складывать все подключения
 
     public static function start() {
-        // Стартуем WebSocket-сервер на порту 27800
         self::$worker = new Worker(self::$websocket);
-        //debug(self::$worker);
     }
 
     public static function run() {
@@ -30,9 +27,6 @@ class ChatWorker {
         self::onClose(self::$connections);
         self::onMessage(self::$connections);
         Worker::runAll();
-        //debug(self::$connections);
-        //debug(self::$worker);
-        //debug(self::$connections);
     }
 
     public static function onWorkerStart(&$connections) {

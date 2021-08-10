@@ -19,8 +19,8 @@ class Chat {
     private static $server_name = 'worker';
 
     public static function start(): void {
-        echo "php ".self::$server.".php";
-        $handle = exec("php ".self::$server_name.".php"); // server.php
+        echo "php ".self::$server_name.".php";
+        exec("php ".self::$server_name.".php"); // server.php
     }
 
     public static function stop(): void {

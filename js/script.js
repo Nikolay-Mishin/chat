@@ -13,7 +13,8 @@ const { PROTOCOL, PROTOCOL_SHORT, HOST, PORT, IP_LISTEN, SERVER } = Config;
 
 $(document).ready(function($) {
 	//let server = "ws://chat:8090/WebForMyself/server.php",
-	let server = `${PROTOCOL_SHORT}://${HOST}:${PORT}/${SERVER}`,
+	//let server = `${PROTOCOL_SHORT}://${HOST}:${PORT}/${SERVER}`,
+	let server = `${PROTOCOL_SHORT}://${HOST}:${PORT}`,
 		socket = new WebSocket(server);
 
 	send.socket = socket;

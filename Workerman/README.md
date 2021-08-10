@@ -1,5 +1,10 @@
 # SimpleChat-server
 
+```php
+cd ../../domains/chat/Workerman
+php worker.php start
+```
+
 ![Скриншот окна терминала](https://wxmaper.ru/pub/simplychat/scr3-1.png)
 ![Скриншот окна клиента](https://wxmaper.ru/pub/simplychat/scr1.png)
 

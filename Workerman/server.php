@@ -6,4 +6,5 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use worker\Chat;
 
-Chat::run();
+Chat::start();
+//Chat::run();

@@ -16,8 +16,6 @@ class Chat {
     public static $worker;
     public static $connections = []; // сюда будем складывать все подключения
 
-    private static $server_name = 'worker';
-
     public static function start(): void {
         echo SERVER_PATH;
         exec("php ".SERVER_PATH); // server.php

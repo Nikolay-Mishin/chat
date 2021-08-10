@@ -19,12 +19,12 @@ class Chat {
     private static $server_name = 'worker';
 
     public static function start(): void {
-        echo "php ".self::$server_name.".php";
-        exec("php ".self::$server_name.".php"); // server.php
+        echo SERVER_PATH;
+        exec("php ".SERVER_PATH); // server.php
     }
 
     public static function stop(): void {
-        $output = passthru("ps ax | grep ".self::$server_name."\.php"); // server
+        $output = passthru("ps ax | grep server\.php"); // server
         print_r($output);
         $ar = preg_split('/ /', $output);
         if (in_array('/usr/bin/php', $ar)) {

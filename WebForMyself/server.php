@@ -15,12 +15,12 @@ socket_listen($socket);
 
 $clientSocketArray = array($socket);
 
-while(true) {
+while (true) {
     $newSocketArray = $clientSocketArray;
     $nullA = [];
     socket_select($newSocketArray, $nullA, $nullA, 0, 10);
 
-    if(in_array($socket, $newSocketArray)) {
+    if (in_array($socket, $newSocketArray)) {
         $newSocket = socket_accept($socket);
         $clientSocketArray[] = $newSocket;
         
@@ -35,9 +35,9 @@ while(true) {
         unset($newSocketArray[$newSocketArrayIndex]);
     }
 
-    foreach($newSocketArray as $newSocketArrayResource) {
+    foreach ($newSocketArray as $newSocketArrayResource) {
         //1
-        while(socket_recv($newSocketArrayResource, $socketData, 1024, 0) >=  1) {
+        while (socket_recv($newSocketArrayResource, $socketData, 1024, 0) >=  1) {
             $socketMessage = $chat->unseal($socketData);
             $messageObj = json_decode($socketMessage);
 
@@ -50,7 +50,7 @@ while(true) {
 
         ///2
         $socketData = @socket_read($newSocketArrayResource,1024, PHP_NORMAL_READ);
-        if($socketData === false) {
+        if ($socketData === false) {
             socket_getpeername($newSocketArrayResource, $client_ip_address);
             $connectionACK = $chat->newDisconectedACK($client_ip_address);
             $chat->send($connectionACK, $clientSocketArray);

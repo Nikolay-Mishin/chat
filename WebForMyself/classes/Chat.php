@@ -6,9 +6,9 @@ class Chat {
         $headers = array();
         $tmpLine = preg_split("/\r\n/", $headersText);
 
-        foreach($tmpLine as $line) {
+        foreach ($tmpLine as $line) {
             $line = rtrim($line);
-            if(preg_match('/\A(\S+): (.*)\z/', $line, $matches)) {
+            if (preg_match('/\A(\S+): (.*)\z/', $line, $matches)) {
                 $headers[$matches[1]] = $matches[2];
             }
         }
@@ -29,7 +29,7 @@ class Chat {
 
     public function send($message, $clientSocketArray) {
         //$messageLength = strlen($message);
-        foreach($clientSocketArray as $clientSocket) {
+        foreach ($clientSocketArray as $clientSocket) {
             @socket_write($clientSocket, $message, strlen($message));
         }
         return true;
@@ -78,13 +78,13 @@ class Chat {
         $length = strlen($socketData);
         $header = "";
 
-        if($length <= 125) {
+        if ($length <= 125) {
             $header = pack('CC', $b1, $length);
         }
-        else if($length > 125 && $length < 65536) {
+        else if ($length > 125 && $length < 65536) {
             $header = pack('CCn', $b1, 126, $length);
         }
-        else if($length > 65536) {
+        else if ($length > 65536) {
             $header = pack('CCNN', $b1, 127, $length);
         }
 
@@ -94,11 +94,11 @@ class Chat {
     public function unseal($socketData) {
         $length = ord($socketData[1]) & 127;
 
-        if($length == 126) {
+        if ($length == 126) {
             $mask = substr($socketData, 4, 4);
             $data = substr($socketData, 8);
         }
-        else if($length == 127) {
+        else if ($length == 127) {
             $mask = substr($socketData, 10, 4);
             $data = substr($socketData, 14);
         }
@@ -109,7 +109,7 @@ class Chat {
 
         $socketStr = "";
         
-        for($i = 0; $i < strlen($data); ++$i) {
+        for ($i = 0; $i < strlen($data); ++$i) {
             $socketStr .= $data[$i] ^ $mask[$i%4];
         }
 

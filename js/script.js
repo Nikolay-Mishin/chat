@@ -9,11 +9,11 @@ function send(action, message = {}) {
 }
 
 console.log(Config);
-const { PROTOCOL, HOST, PORT, IP_LISTEN, SERVER } = Config;
+const { PROTOCOL, PROTOCOL_SHORT, HOST, PORT, IP_LISTEN, SERVER } = Config;
 
 $(document).ready(function($) {
-	//var server = "ws://chat:8090/WebForMyself/server.php",
-	var server = `ws://${HOST}:${PORT}`,
+	//let server = "ws://chat:8090/WebForMyself/server.php",
+	let server = `${PROTOCOL_SHORT}://${HOST}:${PORT}/${SERVER}`,
 		socket = new WebSocket(server);
 
 	send.socket = socket;
@@ -31,7 +31,7 @@ $(document).ready(function($) {
 	}
 
 	socket.onmessage = function(event) {
-		var data = JSON.parse(event.data);
+		let data = JSON.parse(event.data);
 		message("<div>" + data.action + " - " + data.message + "</div>");
 		console.log(data);
 		if (data.action == 'Ping') {
@@ -40,7 +40,7 @@ $(document).ready(function($) {
 	}
 
 	$("#chat").on('submit', function() {
-		var message = {
+		let message = {
 			chat_message: $("#chat-message").val(),
 			chat_user: $("#chat-user").val()
 		};

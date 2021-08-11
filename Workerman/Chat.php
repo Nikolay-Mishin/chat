@@ -8,90 +8,20 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Workerman\Lib\Timer;
 use Workerman\Worker;
 
-require_once __DIR__ . '/../config/config.php';
+use worker\Process;
 
-class Chat {
+require_once __DIR__ . '/../config/chat.php';
 
-    public static $websocket = PROTOCOL."://".IP_LISTEN.":".PORT;
-    public static $worker;
-    public static $connections = []; // сюда будем складывать все подключения
+class ChatWorker {
 
-    /**
-    * You can use the proc_ functions to get better control.
-    * You will find it in the manual. Below you find code you might find useful.
-    * It works only under windows, you need a different kill routine on linux.
-    * he script terminates the (else endless running) ping process after approximatly 5 seconds.
-    */
-    public static function kill(int $pid, $process, array $pipes): string {
-        $return_value = proc_terminate($process);
-        //$return_value = stripos(php_uname('s'), 'win') > -1 ? exec("taskkill /F /T /PID $pid") : exec("kill -9 $pid");
-        fclose($pipes[0]);
-        //fclose($pipes[1]);
-        $return_value2 = proc_close($process);
-        return "$return_value, $return_value2";
-    }
-
-    public static function proc(string $cmd) {
-        $descriptorspec = array(
-           0 => array("pipe", "r"),  // stdin - канал, из которого дочерний процесс будет читать
-           //1 => array("pipe", "w"),  // stdout - канал, в который дочерний процесс будет записывать
-           //2 => array("file", "error-output.txt", "a+") // stderr - файл для записи
-        );
-
-        // Рабочая директория команды. Это должен быть абсолютный путь к директории или null, если требуется использовать директорию по умолчанию (рабочая директория текущего процесса PHP).
-        $cwd = '/';
-        // Массив переменных окружения для запускаемой команды или null, если требуется использовать то же самое окружение, что и у текущего PHP-процесса.
-        $env = array('some_option' => 'aeiou');
-
-        $process = proc_open($cmd, $descriptorspec, $pipes);
-
-        //$terminate_after = 5; // seconds after process is terminated
-        //usleep($terminate_after * 1000000); // wait for 5 seconds
-
-        if (is_resource($process)) {
-            // $pipes теперь выглядит так:
-            // 0 => записывающий обработчик, подключённый к дочернему stdin
-            // 1 => читающий обработчик, подключённый к дочернему stdout
-            // Вывод сообщений об ошибках будет добавляться в error-output.txt
-
-            fwrite($pipes[0], '<?php print_r($_ENV); ?>');
-            //echo stream_get_contents($pipes[1]);
-            //echo '<br>';
-
-            $pstatus = proc_get_status($process);
-            echo '$pstatus: ';
-            echo '<br>';
-            print_r($pstatus);
-            $PID = $pstatus['pid'];
-
-            // Важно закрывать все каналы перед вызовом proc_close во избежание мёртвой блокировки
-            $return_value = self::kill($PID, $process, $pipes); // вместо proc_terminate($process);
-
-            echo '<br>';
-            echo "команда вернула $return_value\n";
-
-            // terminate the process
-            $time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
-            echo '<br>Process terminated after: '.$time;
-
-            /*
-            Результатом выполнения данного примера будет что-то подобное:
-            Array
-            (
-                [some_option] => aeiou
-                [PWD] => /tmp
-                [SHLVL] => 1
-                [_] => /usr/local/bin/php
-            )
-            команда вернула 0
-            */
-        }
-    }
+    public static string $websocket = PROTOCOL."://".IP_LISTEN.":".PORT;
+    public static Worker $worker;
+    public static array $connections = []; // сюда будем складывать все подключения
 
     public static function start(): void {
-        exec('php '.SERVER_PATH); // server.php
-        //self::proc('php');
-        //self::proc('php '.SERVER_PATH);
+        //exec('php '.SERVER_PATH); // server.php
+        new Process('php');
+        //new Process('php '.SERVER_PATH);
     }
 
     public static function stop(): void {
@@ -105,7 +35,7 @@ class Chat {
         }
     }
 
-    public static function run() {
+    public static function run(): void {
         self::$worker = new Worker(self::$websocket);
         self::onWorkerStart(self::$connections);
         self::onConnect(self::$connections);
@@ -114,10 +44,10 @@ class Chat {
         Worker::runAll();
     }
 
-    public static function onWorkerStart(&$connections) {
-        self::$worker->onWorkerStart = function($worker) use (&$connections) {
+    public static function onWorkerStart(array &$connections): void {
+        self::$worker->onWorkerStart = function(Worker $worker) use (&$connections): void {
             $interval = 5; // пингуем каждые 5 секунд
-            Timer::add($interval, function() use (&$connections) {
+            Timer::add($interval, function() use (&$connections): void {
                 foreach ($connections as $c) {
                     // Если ответ не пришел 3 раза, то удаляем соединение из списка
                     // и оповещаем всех участников об "отвалившемся" пользователе
@@ -148,10 +78,10 @@ class Chat {
         };
     }
 
-    public static function onConnect(&$connections) {
-        self::$worker->onConnect = function($connection) use (&$connections) {
+    public static function onConnect(array &$connections): void {
+        self::$worker->onConnect = function(Worker $connection) use (&$connections): void {
             // Эта функция выполняется при подключении пользователя к WebSocket-серверу
-            $connection->onWebSocketConnect = function($connection) use (&$connections) {
+            $connection->onWebSocketConnect = function(Worker $connection) use (&$connections) {
                 // Достаём имя пользователя, если оно было указано
                 if (isset($_GET['userName'])) {
                     $originalUserName = preg_replace('/[^a-zA-Zа-яА-ЯёЁ0-9\-\_ ]/u', '', trim($_GET['userName']));
@@ -197,7 +127,7 @@ class Chat {
                         }
                     }
                 } 
-                while($duplicate);
+                while ($duplicate);
         
                 // Добавляем соединение в список
                 $connection->userName = $userName;
@@ -246,11 +176,11 @@ class Chat {
         };
     }
 
-    public static function onClose(&$connections) {
-        self::$worker->onClose = function($connection) use (&$connections) {
+    public static function onClose(array &$connections): void {
+        self::$worker->onClose = function(Worker $connection) use (&$connections) {
             // Эта функция выполняется при закрытии соединения
             if (!isset($connections[$connection->id])) {
-                return;
+                return null;
             }
     
             // Удаляем соединение из списка
@@ -272,8 +202,8 @@ class Chat {
         };
     }
 
-    public static function onMessage(&$connections) {
-        self::$worker->onMessage = function($connection, $message) use (&$connections) {
+    public static function onMessage(array &$connections) {
+        self::$worker->onMessage = function(Worker $connection, string $message) use (&$connections): void {
             $messageData = json_decode($message, true);
             $toUserId = isset($messageData['toUserId']) ? (int) $messageData['toUserId'] : 0;
             $action = isset($messageData['action']) ? $messageData['action'] : '';

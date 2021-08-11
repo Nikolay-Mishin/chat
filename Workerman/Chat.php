@@ -16,7 +16,7 @@ class Chat {
     public static string $websocket = PROTOCOL."://".IP_LISTEN.":".PORT;
     public static Worker $worker;
     public static array $connections = []; // сюда будем складывать все подключения
-    public static Process $process;
+    public static ?Process $process = null;
 
     public static function start(): void {
         //exec('php '.SERVER_PATH); // server.php
@@ -29,12 +29,13 @@ class Chat {
     public static function stop(): void {
         passthru("ps ax | grep ".SERVER_PATH, $output); // server.php
         $ar = preg_split('/ /', $output);
-        print_r($ar);
+        debug($ar);
         if (in_array('/usr/bin/php', $ar)) {
             $pid = (int) $ar[0];
             echo $pid;
             //posix_kill($pid, SIGKILL);
         }
+        debug(self::$process);
     }
 
     public static function run(): void {

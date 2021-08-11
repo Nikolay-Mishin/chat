@@ -17,17 +17,20 @@ class Chat {
     public static $connections = []; // сюда будем складывать все подключения
 
     public static function start(): void {
-        echo SERVER_PATH;
-        exec("php ".SERVER_PATH); // server.php
+        //echo SERVER;
+        //exec("php ".SERVER); // server.php
     }
 
     public static function stop(): void {
-        $output = passthru("ps ax | grep server\.php"); // server
-        print_r($output);
+        $output = passthru("ps ax | grep server\.php"); // server.php
         $ar = preg_split('/ /', $output);
+        print_r($ar);
+        $output = passthru("ps ax | grep \.php"); // server.php
+        $ar = preg_split('/ /', $output);
+        print_r($ar);
         if (in_array('/usr/bin/php', $ar)) {
             $pid = (int) $ar[0];
-            posix_kill($pid, SIGKILL);
+            //posix_kill($pid, SIGKILL);
         }
     }
 

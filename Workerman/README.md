@@ -2,7 +2,7 @@
 
 ```php
 cd ../../domains/chat/Workerman
-php worker.php start
+php server.php start
 ```
 
 ![Скриншот окна терминала](https://wxmaper.ru/pub/simplychat/scr3-1.png)

@@ -8,9 +8,11 @@ define('HOST', 'chat'); // 'localhost/chat'
 define('PORT', 8090);
 define('IP_LISTEN', '0.0.0.0');
 
+define('SERVER_NAME', 'Workerman');
 define('SERVER_FILE', 'server.php');
-define('WebForMyself', 'WebForMyself/' . SERVER_FILE);
-define('Workerman', 'Workerman/' . SERVER_FILE);
-define('Ratchet', 'Ratchet/' . SERVER_FILE);
-define('SERVER',  Workerman);
+define('SERVER',  SERVER_NAME . '/' . SERVER_FILE);
+
 define('SERVER_PATH', DIR . '/' . SERVER);
+define('SERVER_DIR', dirname(SERVER_PATH));
+define('SERVER_START', SERVER_DIR . '/start.php');
+define('SERVER_STOP', SERVER_DIR . '/stop.php');

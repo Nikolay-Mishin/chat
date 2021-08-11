@@ -16,10 +16,12 @@ class Chat {
     public static string $websocket = PROTOCOL."://".IP_LISTEN.":".PORT;
     public static Worker $worker;
     public static array $connections = []; // сюда будем складывать все подключения
+    public static Process $process;
 
     public static function start(): void {
         //exec('php '.SERVER_PATH); // server.php
-        Process::add('php');
+        self::$process = Process::add('php');
+        debug(self::$process);
         debug(Process::$process_list);
         //new Process('php '.SERVER_PATH);
     }

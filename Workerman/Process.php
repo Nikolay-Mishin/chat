@@ -3,18 +3,13 @@
 namespace worker;
 
 require_once __DIR__ . '/../vendor/autoload.php';
-
-// Подключаем библиотеку Workerman
-use Workerman\Lib\Timer;
-use Workerman\Worker;
-
 require_once __DIR__ . '/../config/config.php';
 
 class Process {
-
-    public static int $terminate_after = 5; // seconds after process is terminated
+    
     public static array $process_list = []; // сюда будем складывать все процессы
 
+    public int $terminate_after = 5; // seconds after process is terminated
     public $process;
     public int $pid;
     public array $pstatus;
@@ -25,16 +20,25 @@ class Process {
         //1 => array("pipe", "w"),  // stdout - канал, в который дочерний процесс будет записывать
         //2 => array("file", "error-output.txt", "a+") // stderr - файл для записи
     );
-    public array $pipes;
+    public ?array $pipes;
     // Рабочая директория команды. Это должен быть абсолютный путь к директории или null, если требуется использовать директорию по умолчанию (рабочая директория текущего процесса PHP).
     public string $cwd = '/';
     // Массив переменных окружения для запускаемой команды или null, если требуется использовать то же самое окружение, что и у текущего PHP-процесса.
     public array $env = array('some_option' => 'aeiou');
 
-    public function __construct(string $cmd) {
-        $this->process = proc_open($cmd, $this->descriptorspec, $this->pipes, /*$this->cwd, $this->env*/);
+    public string $output = '';
+    public string $result = '';
 
-        //
+    public function __construct(string $cmd, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null) {
+        $this->cmd = $cmd;
+        $this->descriptorspec = $descriptorspec ?? $this->descriptorspec;
+        $this->cwd = $cwd ?? $this->cwd;
+        $this->env = $env ?? $this->env;
+
+        $this->process = proc_open($this->cmd, $this->descriptorspec, $this->pipes, /*$this->cwd, $this->env*/);
+
+        print_r($this->process);
+
         //usleep($this->terminate_after * 1000000); // wait for 5 seconds
 
         if (is_resource($this->process)) {
@@ -44,24 +48,21 @@ class Process {
             // Вывод сообщений об ошибках будет добавляться в error-output.txt
 
             fwrite($this->pipes[0], '<?php print_r($_ENV); ?>');
-            //echo stream_get_contents($pipes[1]);
-            //echo '<br>';
+            //debug($this->output = stream_get_contents($pipes[1]));
 
             $this->pstatus = proc_get_status($this->process);
-            echo '$pstatus: ';
-            echo '<br>';
-            print_r($this->pstatus);
+            debug('$pstatus: ');
+            debug($this->pstatus);
             $this->pid = $this->pstatus['pid'];
 
             // Важно закрывать все каналы перед вызовом proc_close во избежание мёртвой блокировки
-            //$return_value = $this->kill(); // вместо proc_terminate($this->process);
+            $this->result = $this->kill();
 
-            echo '<br>';
-            echo "команда вернула $return_value\n";
+            debug("команда вернула $this->result\n");
 
             // terminate the process
             $time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
-            echo '<br>Process terminated after: '.$time;
+            debug('Process terminated after: '.$time);
 
             /*
             Результатом выполнения данного примера будет что-то подобное:
@@ -77,6 +78,11 @@ class Process {
         }
     }
 
+    public static function add(string $cmd, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null) {
+        $process = new self($cmd, $descriptorspec, $cwd, $env);
+        return self::$process_list[$process->pid] = $process;
+    }
+
     /**
     * You can use the proc_ functions to get better control.
     * You will find it in the manual. Below you find code you might find useful.
@@ -85,9 +91,10 @@ class Process {
     */
     public function kill(): string {
         $return_value = proc_terminate($this->process);
-        //$return_value = stripos(php_uname('s'), 'win') > -1 ? exec("taskkill /F /T /PID $this->pid") : exec("kill -9 $this->pid");
-        fclose($pipes[0]);
-        //fclose($this->pipes[1]);
+        //$return_value = stripos(php_uname('s'), 'win') > -1 ? exec("taskkill /F /T /PID $this->pid") : exec("kill -9 $this->pid"); // вместо proc_terminate($this->process);
+        foreach ($this->pipes as $pipe) {
+            fclose($pipe);
+        }
         $return_value2 = proc_close($this->process);
         return "$return_value, $return_value2";
     }

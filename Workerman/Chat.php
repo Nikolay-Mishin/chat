@@ -3,6 +3,7 @@
 namespace worker;
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../config/config.php';
 
 // Подключаем библиотеку Workerman
 use Workerman\Lib\Timer;
@@ -10,9 +11,7 @@ use Workerman\Worker;
 
 use worker\Process;
 
-require_once __DIR__ . '/../config/chat.php';
-
-class ChatWorker {
+class Chat {
 
     public static string $websocket = PROTOCOL."://".IP_LISTEN.":".PORT;
     public static Worker $worker;
@@ -20,7 +19,8 @@ class ChatWorker {
 
     public static function start(): void {
         //exec('php '.SERVER_PATH); // server.php
-        new Process('php');
+        Process::add('php');
+        debug(Process::$process_list);
         //new Process('php '.SERVER_PATH);
     }
 

@@ -10,6 +10,7 @@ $(document).ready(function ($) {
 		$.ajax({
 			type: "POST",
 			url: url, // указываем URL
+			data: { action: target.value},
 			success: function(data, textStatus) { // вешаем свой обработчик на функцию success
 				console.log(data, textStatus);
 			}

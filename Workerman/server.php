@@ -1,12 +1,11 @@
 <?php
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../config/config.php';
 
 // Подключаем библиотеку Workerman
 use Workerman\Lib\Timer;
 use Workerman\Worker;
-
-require_once __DIR__ . '/../config/config.php';
 
 $connections = []; // сюда будем складывать все подключения
 

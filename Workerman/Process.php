@@ -57,7 +57,7 @@ class Process {
             $this->pid = $this->pstatus['pid'];
 
             // Важно закрывать все каналы перед вызовом proc_close во избежание мёртвой блокировки
-            $this->result = $this->kill();
+            $this->kill();
 
             debug("команда вернула $this->result\n");
 
@@ -79,7 +79,7 @@ class Process {
         }
     }
 
-    public static function add(string $cmd, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null, ?int $terminate_after = null) {
+    public static function add(string $cmd, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null, ?int $terminate_after = null): self {
         $process = new self($cmd, $descriptorspec, $cwd, $env, $terminate_after);
         return self::$process_list[$process->pid] = $process;
     }
@@ -97,7 +97,7 @@ class Process {
             fclose($pipe);
         }
         $return_value2 = proc_close($this->process);
-        return "$return_value, $return_value2";
+        return $this->result = "$return_value, $return_value2";
     }
 
 }

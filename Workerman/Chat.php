@@ -21,9 +21,13 @@ class Chat {
     public static function start(): void {
         //exec('php '.SERVER_PATH); // server.php
         self::$process = Process::add('php');
-        debug(self::$process);
-        debug(Process::$process_list);
         //new Process('php '.SERVER_PATH);
+        //session_start();
+        if (!isset($_SESSION['process'])) {
+            $_SESSION['process'] = self::$process;
+        }
+        debug($_SESSION['process']);
+        debug(Process::$process_list);
     }
 
     public static function stop(): void {
@@ -35,7 +39,7 @@ class Chat {
             echo $pid;
             //posix_kill($pid, SIGKILL);
         }
-        debug(self::$process);
+        session_destroy();
     }
 
     public static function run(): void {

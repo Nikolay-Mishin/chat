@@ -6,9 +6,13 @@
 </head>
 
 <body>
+	<? require_once __DIR__ . '/../config/config.php'; ?>
+	<? session_start(); ?>
+
 	<div id="chat-action">
 		<input type="button" id="chat-start" value="start" >
 		<input type="button" id="chat-stop" value="stop" >
+		<? debug($_SESSION); ?>
 		<div id="result"></div>
 	</div>
 

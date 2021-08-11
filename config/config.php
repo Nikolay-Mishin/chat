@@ -27,3 +27,9 @@ function debug($arr, bool $die = false): void {
 	echo '<pre>' . print_r($arr, true) . '</pre>';
 	if ($die) die;
 }
+
+$constants = json_encode(get_defined_constants(true)['user']);
+$Config = "<script>
+	const Config = $constants;
+	Object.freeze(Config); // замораживает объект
+</script>";

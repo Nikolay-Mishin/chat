@@ -16,12 +16,7 @@
 	</form>
 
 	<? require_once __DIR__ . '/config/config.php'; ?>
-
-	<script>
-		const Config = <?= json_encode(get_defined_constants(true)['user']); ?>;
-		Object.freeze(Config); // замораживает объект
-	</script>
-
+	<?= $Config; ?>
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	<script src="js/script.js"></script>
 </body>

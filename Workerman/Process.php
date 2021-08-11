@@ -29,11 +29,12 @@ class Process {
     public string $output = '';
     public string $result = '';
 
-    public function __construct(string $cmd, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null) {
+    public function __construct(string $cmd, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null, ?int $terminate_after = null) {
         $this->cmd = $cmd;
         $this->descriptorspec = $descriptorspec ?? $this->descriptorspec;
         $this->cwd = $cwd ?? $this->cwd;
         $this->env = $env ?? $this->env;
+        $this->terminate_after = $this->terminate_after ?? $terminate_after;
 
         $this->process = proc_open($this->cmd, $this->descriptorspec, $this->pipes, /*$this->cwd, $this->env*/);
 
@@ -78,8 +79,8 @@ class Process {
         }
     }
 
-    public static function add(string $cmd, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null) {
-        $process = new self($cmd, $descriptorspec, $cwd, $env);
+    public static function add(string $cmd, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null, ?int $terminate_after = null) {
+        $process = new self($cmd, $descriptorspec, $cwd, $env, $terminate_after);
         return self::$process_list[$process->pid] = $process;
     }
 

@@ -9,8 +9,6 @@ require_once __DIR__ . '/../config/config.php';
 use Workerman\Lib\Timer;
 use Workerman\Worker;
 
-use worker\Process;
-
 class Chat {
 
     public static string $websocket = PROTOCOL."://".IP_LISTEN.":".PORT;
@@ -20,14 +18,9 @@ class Chat {
 
     public static function start(): void {
         //exec('php '.SERVER_PATH); // server.php
-        self::$process = Process::add('php');
+        Process::add('php', 'chat');
         //new Process('php '.SERVER_PATH);
-        //session_start();
-        if (!isset($_SESSION['process'])) {
-            $_SESSION['process'] = self::$process;
-        }
         debug($_SESSION['process']);
-        debug(Process::$process_list);
     }
 
     public static function stop(): void {
@@ -39,7 +32,9 @@ class Chat {
             echo $pid;
             //posix_kill($pid, SIGKILL);
         }
-        session_destroy();
+        if (isset($_SESSION['process'])) {
+            unset($_SESSION['process']);
+        }
     }
 
     public static function run(): void {

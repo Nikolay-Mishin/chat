@@ -15,10 +15,11 @@ class Chat {
     public static Worker $worker;
     public static array $connections = []; // сюда будем складывать все подключения
     public static ?Process $process = null;
+    public static string $pkey = 'chat';
 
     public static function start(): void {
         //exec('php '.SERVER_PATH); // server.php
-        Process::add('php', 'chat');
+        Process::add('php', self::$pkey);
         //new Process('php '.SERVER_PATH);
         debug($_SESSION['process']);
     }
@@ -32,8 +33,8 @@ class Chat {
             echo $pid;
             //posix_kill($pid, SIGKILL);
         }
-        if (isset($_SESSION['process'])) {
-            unset($_SESSION['process']);
+        if (isset($_SESSION['process']) && isset($_SESSION['process'][self::$pkey])) {
+            unset($_SESSION['process'][self::$pkey]);
         }
     }
 

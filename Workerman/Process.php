@@ -21,7 +21,7 @@ class Process {
     );
     public ?array $pipes;
     // Рабочая директория команды. Это должен быть абсолютный путь к директории или null, если требуется использовать директорию по умолчанию (рабочая директория текущего процесса PHP).
-    public string $cwd = '/';
+    public string $cwd = '/tmp';
     // Массив переменных окружения для запускаемой команды или null, если требуется использовать то же самое окружение, что и у текущего PHP-процесса.
     public array $env = array('some_option' => 'aeiou');
 
@@ -56,15 +56,11 @@ class Process {
             debug('$pstatus: ');
             debug($this->pstatus);
             $this->pid = $this->pstatus['pid'];
-            
-            $this->kill();
-
-            debug("команда вернула $this->result\n");
 
             // terminate the process
             $time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
             debug('Process terminated after: '.$time);
-
+            
             /*
             Результатом выполнения данного примера будет что-то подобное:
             Array
@@ -74,7 +70,6 @@ class Process {
                 [SHLVL] => 1
                 [_] => /usr/local/bin/php
             )
-            команда вернула 0
             */
         }
     }
@@ -91,6 +86,7 @@ class Process {
         if (isset($_SESSION['process']) && isset($_SESSION['process'][$pkey])) {
             $process = $_SESSION['process'][$pkey];
             $process->kill();
+            debug("команда вернула $process->result");
         }
     }
 

@@ -7,5 +7,4 @@ use worker\Chat;
 
 session_start();
 
-$action = $_POST['action'] ?? null;
-Chat::$action();
+Chat::start();

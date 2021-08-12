@@ -16,7 +16,7 @@ class Process {
     public string $cmd;
     public array $descriptorspec = array(
         0 => array("pipe", "r"),  // stdin - канал, из которого дочерний процесс будет читать
-        //1 => array("pipe", "w"),  // stdout - канал, в который дочерний процесс будет записывать
+        1 => array("pipe", "w"),  // stdout - канал, в который дочерний процесс будет записывать
         //2 => array("file", "error-output.txt", "a+") // stderr - файл для записи
     );
     public ?array $pipes;
@@ -38,8 +38,6 @@ class Process {
 
         $this->process = proc_open($this->cmd, $this->descriptorspec, $this->pipes, /*$this->cwd, $this->env*/);
 
-        debug($this->process);
-
         //usleep($this->terminate_after * 1000000); // wait for 5 seconds
 
         if (is_resource($this->process)) {
@@ -48,18 +46,17 @@ class Process {
             // 1 => читающий обработчик, подключённый к дочернему stdout
             // Вывод сообщений об ошибках будет добавляться в error-output.txt
 
-            fwrite($this->pipes[0], '<?php print_r($_ENV); ?>');
-            //$this->output = stream_get_contents($pipes[1])
+            $write = '<?php print_r($_ENV); ?>';
+            //fwrite($this->pipes[0], $write);
+            $this->output = stream_get_contents($this->pipes[1]);
             //debug($this->output);
 
             $this->pstatus = proc_get_status($this->process);
-            debug('$pstatus: ');
-            debug($this->pstatus);
             $this->pid = $this->pstatus['pid'];
 
             // terminate the process
             $time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
-            debug('Process terminated after: '.$time);
+            //debug('Process terminated after: '.$time);
             
             /*
             Результатом выполнения данного примера будет что-то подобное:
@@ -79,14 +76,30 @@ class Process {
         if (!isset($_SESSION['process'])) {
             $_SESSION['process'] = [];
         }
-        return $_SESSION['process'][$process->getPkey()] = $process;
+        debug($process);
+        return $_SESSION['process'][$process->getPid()] = $process;
     }
     
-    public static function killProc() {
-        if (isset($_SESSION['process']) && isset($_SESSION['process'][$pkey])) {
-            $process = $_SESSION['process'][$pkey];
+    public static function killProc($pkey) {
+        if ($process = self::getProcess($pkey)) {
+            debug($process);
             $process->kill();
             debug("команда вернула $process->result");
+        }
+    }
+
+    public static function getProcess($pkey): ?self {
+        $process_list = self::getProcessList();
+        return $process_list[$pkey] ?? null;
+    }
+
+    public static function getProcessList(): array {
+        return $_SESSION['process'] ?? [];
+    }
+
+    public static function clean() {
+        if (isset($_SESSION['process'])) {
+            unset($_SESSION['process']);
         }
     }
 
@@ -104,13 +117,13 @@ class Process {
             fclose($pipe);
         }
         $return_value2 = proc_close($this->process);
-        if (isset($_SESSION['process']) && isset($_SESSION['process'][$this->getPkey()])) {
-            unset($_SESSION['process'][$this->getPkey()]);
+        if (isset($_SESSION['process']) && isset($_SESSION['process'][$this->getPid()])) {
+            unset($_SESSION['process'][$this->getPid()]);
         }
         return $this->result = "$return_value, $return_value2";
     }
     
-    public function getPkey() {
+    public function getPid() {
         return $this->pkey ?? $this->pid;
     }
 

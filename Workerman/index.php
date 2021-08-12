@@ -12,7 +12,7 @@
 	<div id="chat-action">
 		<input type="button" id="chat-start" value="start" >
 		<input type="button" id="chat-stop" value="stop" >
-		<? debug($_SESSION); ?>
+		<input type="button" id="chat-clean" value="clean" >
 		<div id="result"></div>
 	</div>
 

@@ -2,7 +2,7 @@ $(document).ready(function ($) {
 	$("#chat-action").on('click', function (event) {
 		console.log(event.target);
 		console.log(event.target.value);
-		ajax(`${event.target.value}.php`, event.target);
+		ajax('action.php', event.target);
 		return false;
 	});
 

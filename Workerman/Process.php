@@ -79,9 +79,12 @@ class Process {
         }
     }
 
-    public static function add(string $cmd, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null, ?int $terminate_after = null): self {
+    public static function add(string $cmd, ?string $key = null, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null, ?int $terminate_after = null): self {
         $process = new self($cmd, $descriptorspec, $cwd, $env, $terminate_after);
-        return self::$process_list[$process->pid] = $process;
+        if (!isset($_SESSION['process'])) {
+            $_SESSION['process'] = [];
+        }
+        return $_SESSION['process'][$key ?? $process->pid] = $process;
     }
 
     /**
@@ -97,6 +100,9 @@ class Process {
             fclose($pipe);
         }
         $return_value2 = proc_close($this->process);
+        if (isset($_SESSION['process'])) {
+            unset($_SESSION['process']);
+        }
         return $this->result = "$return_value, $return_value2";
     }
 

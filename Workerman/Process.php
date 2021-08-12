@@ -86,6 +86,13 @@ class Process {
         }
         return $_SESSION['process'][$process->getPkey()] = $process;
     }
+    
+    public static function killProc() {
+        if (isset($_SESSION['process']) && isset($_SESSION['process'][$pkey])) {
+            $process = $_SESSION['process'][$pkey];
+            $process->kill();
+        }
+    }
 
     /**
     * You can use the proc_ functions to get better control.

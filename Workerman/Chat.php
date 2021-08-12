@@ -33,9 +33,7 @@ class Chat {
             echo $pid;
             //posix_kill($pid, SIGKILL);
         }
-        if (isset($_SESSION['process']) && isset($_SESSION['process'][self::$pkey])) {
-            unset($_SESSION['process'][self::$pkey]);
-        }
+        Process::killProc(self::$pkey);
     }
 
     public static function run(): void {

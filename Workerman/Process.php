@@ -25,7 +25,7 @@ class Process {
     // Массив переменных окружения для запускаемой команды или null, если требуется использовать то же самое окружение, что и у текущего PHP-процесса.
     public array $env = array('some_option' => 'aeiou');
 
-    public string $output = '';
+    public string $output;
     public string $result = '';
 
     public function __construct(string $cmd, ?string $key = null, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null, ?int $terminate_after = null) {

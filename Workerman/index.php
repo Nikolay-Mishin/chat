@@ -12,9 +12,9 @@
 	<div id="chat-action">
 		<input type="button" id="chat-start" value="start" >
 		<input type="button" id="chat-stop" value="stop" >
-		<input type="button" id="chat-clean" value="clean" >
-		<div id="result"></div>
+		<input type="button" id="chat-log" value="log" >
 	</div>
+	<div id="result"></div>
 
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	<script src="js/script.js"></script>

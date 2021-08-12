@@ -11,7 +11,7 @@ $(document).ready(function ($) {
 			type: "POST",
 			url: url, // указываем URL
 			data: { action: target.value},
-			success: function(data, textStatus) { // вешаем свой обработчик на функцию success
+			success: function(data, status) { // вешаем свой обработчик на функцию success
 				console.log(data);
 				$("#result").html(`${target.value}<br>${data}`);
 			}

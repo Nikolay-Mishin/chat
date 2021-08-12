@@ -18,23 +18,15 @@ class Chat {
     public static string $pkey = 'chat';
 
     public static function start(): void {
-        //exec('php '.SERVER_PATH); // server.php
-        Process::add('php '.SERVER_PATH, self::$pkey);
+        Process::add('php '.SERVER_PATH, self::$pkey); // server.php
     }
 
     public static function stop(): void {
-        passthru("ps ax | grep ".SERVER_PATH, $output); // server.php
-        $ar = preg_split('/ /', $output);
-        if (in_array('/usr/bin/php', $ar)) {
-            $pid = (int) $ar[0];
-            echo $pid;
-            //posix_kill($pid, SIGKILL);
-        }
         Process::killProc(self::$pkey);
     }
 
-    public static function clean() {
-        Process::clean();
+    public static function log(): void {
+        Process::getTaskList();
     }
 
     public static function run(): void {

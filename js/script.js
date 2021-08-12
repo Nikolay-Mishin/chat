@@ -36,7 +36,7 @@ $(document).ready(function($) {
 		message("<div>" + data.action + " - " + data.message + "</div>");
 		console.log(data);
 		if (data.action == 'Ping') {
-			//send('Pong');
+			send('Pong');
 		}
 	}
 

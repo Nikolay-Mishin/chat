@@ -7,10 +7,9 @@ require_once __DIR__ . '/../config/config.php';
 
 class Process {
     
-    public static array $process_list = []; // сюда будем складывать все процессы
-
     public int $terminate_after = 5; // seconds after process is terminated
     public $process;
+    public ?string $pkey;
     public int $pid;
     public array $pstatus;
 
@@ -29,7 +28,8 @@ class Process {
     public string $output = '';
     public string $result = '';
 
-    public function __construct(string $cmd, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null, ?int $terminate_after = null) {
+    public function __construct(string $cmd, ?string $key = null, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null, ?int $terminate_after = null) {
+        $this->pkey = $key;
         $this->cmd = $cmd;
         $this->descriptorspec = $descriptorspec ?? $this->descriptorspec;
         $this->cwd = $cwd ?? $this->cwd;
@@ -38,7 +38,7 @@ class Process {
 
         $this->process = proc_open($this->cmd, $this->descriptorspec, $this->pipes, /*$this->cwd, $this->env*/);
 
-        print_r($this->process);
+        debug($this->process);
 
         //usleep($this->terminate_after * 1000000); // wait for 5 seconds
 
@@ -49,14 +49,14 @@ class Process {
             // Вывод сообщений об ошибках будет добавляться в error-output.txt
 
             fwrite($this->pipes[0], '<?php print_r($_ENV); ?>');
-            //debug($this->output = stream_get_contents($pipes[1]));
+            //$this->output = stream_get_contents($pipes[1])
+            //debug($this->output);
 
             $this->pstatus = proc_get_status($this->process);
             debug('$pstatus: ');
             debug($this->pstatus);
             $this->pid = $this->pstatus['pid'];
-
-            // Важно закрывать все каналы перед вызовом proc_close во избежание мёртвой блокировки
+            
             $this->kill();
 
             debug("команда вернула $this->result\n");
@@ -80,11 +80,11 @@ class Process {
     }
 
     public static function add(string $cmd, ?string $key = null, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null, ?int $terminate_after = null): self {
-        $process = new self($cmd, $descriptorspec, $cwd, $env, $terminate_after);
+        $process = new self($cmd, $key, $descriptorspec, $cwd, $env, $terminate_after);
         if (!isset($_SESSION['process'])) {
             $_SESSION['process'] = [];
         }
-        return $_SESSION['process'][$key ?? $process->pid] = $process;
+        return $_SESSION['process'][$process->getPkey()] = $process;
     }
 
     /**
@@ -96,14 +96,19 @@ class Process {
     public function kill(): string {
         $return_value = proc_terminate($this->process);
         //$return_value = stripos(php_uname('s'), 'win') > -1 ? exec("taskkill /F /T /PID $this->pid") : exec("kill -9 $this->pid"); // вместо proc_terminate($this->process);
+        // Важно закрывать все каналы перед вызовом proc_close во избежание мёртвой блокировки
         foreach ($this->pipes as $pipe) {
             fclose($pipe);
         }
         $return_value2 = proc_close($this->process);
-        if (isset($_SESSION['process'])) {
-            unset($_SESSION['process']);
+        if (isset($_SESSION['process']) && isset($_SESSION['process'][$this->getPkey()])) {
+            unset($_SESSION['process'][$this->getPkey()]);
         }
         return $this->result = "$return_value, $return_value2";
+    }
+    
+    public function getPkey() {
+        return $this->pkey ?? $this->pid;
     }
 
 }

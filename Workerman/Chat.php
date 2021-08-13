@@ -19,14 +19,14 @@ class Chat {
 
     public static function start(): void {
         $process = Process::add('php '.SERVER_PATH, self::$pkey);
-        //debug(Process::$log);
-        exit(json_encode(Process::$log));
+        debug(Process::$log);
+        //exit(json_encode(Process::$log));
     }
 
     public static function stop(): void {
         $process = Process::killProc(self::$pkey);
-        //debug(Process::$log);
-        exit(json_encode(Process::$log));
+        debug(Process::$log);
+        //exit(json_encode(Process::$log));
     }
 
     public static function run(): void {

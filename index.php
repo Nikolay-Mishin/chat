@@ -21,12 +21,10 @@
 		</div>
 	</form>
 
-	
-
 	<? require_once __DIR__ . '/config/config.php'; ?>
 	<? session_start(); ?>
 	<?= $Config; ?>
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-	<script src="js/script.js"></script>
+	<script src="js/chat.js"></script>
 </body>
 </html>

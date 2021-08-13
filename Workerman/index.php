@@ -16,6 +16,6 @@
 	<div id="result"></div>
 
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-	<script src="js/script.js"></script>
+	<script src="js/chat.js"></script>
 </body>
 </html>

@@ -18,13 +18,13 @@ class Chat {
     public static string $pkey = 'chat';
 
     public static function start(): void {
-        //Process::add('php '.SERVER_PATH, self::$pkey);
+        Process::add('php '.SERVER_PATH, self::$pkey);
         debug(Process::$log);
         //exit(json_encode(Process::$log));
     }
 
     public static function stop(): void {
-        //Process::killProc(self::$pkey);
+        Process::killProc(self::$pkey);
         debug(Process::$log);
         //exit(json_encode(Process::$log));
     }

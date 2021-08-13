@@ -22,12 +22,12 @@ function ajax(url, target) {
 	})
 }
 
-$(document).ready(function ($) {
-	console.log(Config);
-	const { PROTOCOL, PROTOCOL_SHORT, HOST, PORT, IP_LISTEN, SERVER, SERVER_ACTION } = Config;
+console.log(Config);
+const { PROTOCOL_SHORT, HOST, PORT, SERVER_PATH, SERVER_ACTION } = Config;
 
+$(document).ready(function ($) {
 	//let server = "ws://chat:8090/WebForMyself/server.php",
-	//let server = `${PROTOCOL_SHORT}://${HOST}:${PORT}/${SERVER}`,
+	//let server = `${PROTOCOL_SHORT}://${HOST}:${PORT}/${SERVER_PATH}`,
 	let server = `${PROTOCOL_SHORT}://${HOST}:${PORT}`,
 		socket = new WebSocket(server);
 

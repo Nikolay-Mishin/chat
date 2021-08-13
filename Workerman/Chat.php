@@ -18,7 +18,7 @@ class Chat {
     public static string $pkey = 'chat';
 
     public static function start(): void {
-        Process::add('php '.SERVER_PATH, self::$pkey);
+        Process::add('php '.SERVER, self::$pkey);
         debug(Process::$log);
         //exit(json_encode(Process::$log));
     }

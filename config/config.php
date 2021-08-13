@@ -1,6 +1,6 @@
 <?php
 
-define('DIR', dirname(__DIR__));
+define('DIR', dirname(__DIR__).'/');
 
 define('PROTOCOL', 'websocket');
 define('PROTOCOL_SHORT', 'ws');
@@ -8,12 +8,9 @@ define('HOST', 'chat'); // 'localhost/chat'
 define('PORT', 8090);
 define('IP_LISTEN', '0.0.0.0');
 
-define('SERVER_NAME', 'Workerman');
-define('SERVER_FILE', 'server.php');
-define('SERVER_ACTION', SERVER_NAME . '/action.php');
-define('SERVER',  SERVER_NAME . '/' . SERVER_FILE);
-
-define('SERVER_PATH', DIR . '/' . SERVER);
+define('SERVER_ACTION', 'Workerman/action.php');
+define('SERVER_PATH', 'Workerman/server.php');
+define('SERVER',  DIR.SERVER_PATH);
 
 /**
  * Распечатывает массив и, если параметр $die = true, завершает выполнение скрипта

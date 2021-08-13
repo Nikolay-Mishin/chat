@@ -8,7 +8,7 @@ define('HOST', 'chat'); // 'localhost/chat'
 define('PORT', 8090);
 define('IP_LISTEN', '0.0.0.0');
 
-define('SERVER_ACTION', 'Workerman/action.php');
+define('SERVER_ACTION', '/Workerman/action.php');
 define('SERVER_PATH', 'Workerman/server.php');
 define('SERVER',  DIR.SERVER_PATH);
 

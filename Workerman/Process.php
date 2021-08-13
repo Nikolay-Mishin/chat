@@ -7,6 +7,8 @@ require_once __DIR__ . '/../config/config.php';
 
 class Process {
     
+    public static array $log = ['start' => [], 'kill' => []];
+    
     public int $terminate_after = 5; // seconds after process is terminated
     public $process;
     public ?string $pkey;
@@ -26,10 +28,10 @@ class Process {
     public array $env = array('some_option' => 'aeiou');
 
     public string $output;
-    public $result;
+    public array $result = [];
 
-    public function __construct(string $cmd, ?string $key = null, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null, ?int $terminate_after = null) {
-        $this->pkey = $key;
+    public function __construct(string $cmd, ?string $pkey = null, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null, ?int $terminate_after = null) {
+        $this->pkey = $pkey;
         $this->cmd = $cmd;
         $this->descriptorspec = $descriptorspec ?? $this->descriptorspec;
         $this->cwd = $cwd ?? $this->cwd;
@@ -71,42 +73,48 @@ class Process {
         }
     }
 
-    public static function add(string $cmd, ?string $key = null, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null, ?int $terminate_after = null): self {
-        $process = new self($cmd, $key, $descriptorspec, $cwd, $env, $terminate_after);
+    public static function add(string $cmd, ?string $pkey = null, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null, ?int $terminate_after = null): ?self {
         if (!isset($_SESSION['process'])) {
             $_SESSION['process'] = [];
         }
-        debug($process);
+        if (self::getProcess($pkey)) return null;
+        $process = new self($cmd, $pkey, $descriptorspec, $cwd, $env, $terminate_after);
+        //debug($process);
+        self::$log['start']['process'] = $process;
         return $_SESSION['process'][$process->getPid()] = $process;
     }
     
-    public static function killProc($pkey) {
+    public static function killProc($pkey): ?self {
         if ($process = self::getProcess($pkey)) {
-            debug(self::isRun($process->pid));
             $process->kill();
-            debug($process);
-            debug(self::isRun($process->pid));
-            debug("команда вернула $process->result");
+            //debug($process);
+            //debug(self::isRun($process->pid));
+            //debug("команда вернула:");
+            //debug($process->result);
+            self::$log['kill']['process'] = $process;
+            self::$log['kill']['isRun'][] = self::isRun($process->pid);
+            self::$log['kill']['result'] = $process->result;
+            return $process;
         }
+        return null;
     }
 
     public static function getProcess($pkey): ?self {
-        $process_list = self::getProcessList();
-        return $process_list[$pkey] ?? null;
+        return self::getProcessList()[$pkey] ?? null;
     }
 
     public static function getProcessList(): array {
-        return $_SESSION['process'] ?? [];
-    }
-
-    public static function getTaskList(): array {
-        exec("tasklist /fo list", $out);
-        debug($out);
-        return $_SESSION['process'] ?? [];
+        if (!isset($_SESSION['process'])) {
+            $_SESSION['process'] = [];
+        }
+        return $_SESSION['process'];
     }
 
     public static function clean() {
-        if (isset($_SESSION['process'])) {
+        if ($process_list = self::getProcessList()) {
+            foreach ($process_list as $process) {
+                $process->kill();
+            }
             unset($_SESSION['process']);
         }
     }
@@ -125,15 +133,21 @@ class Process {
     public static function isRun(int $pid): bool {
         if (stripos(php_uname('s'), 'win') > -1) {
             exec("tasklist /fo list /fi \"pid eq $pid\"", $out);
-            debug($out);
+            //debug($out);
+            if (!isset(self::$log['kill']['isRun']['out'])) self::$log['kill']['isRun']['out'] = [];
+            self::$log['kill']['isRun']['out'][] = $out;
             if (count($out) > 1) {
                 return true;
             }
         }
-        elseif (posix_kill(intval($pid), 0)) {
+        elseif (posix_kill((int) $pid, 0)) {
             return true;
         }
         return false;
+    }
+
+    public static function checkOS(): bool {
+        return stripos(php_uname('s'), 'win') > -1;
     }
 
     /**
@@ -142,25 +156,30 @@ class Process {
     * It works only under windows, you need a different kill routine on linux.
     * he script terminates the (else endless running) ping process after approximatly 5 seconds.
     */
-    public function kill() {
-        if (isset($_SESSION['process']) && isset($_SESSION['process'][$this->getPid()])) {
+    public function kill(): bool {
+        //debug(self::isRun($process->pid));
+        self::$log['kill']['isRun'] = [self::isRun($this->pid)];
+        if (!self::isRun($this->pid)) return true;
+
+        if (self::getProcess($this->getPid())) {
             unset($_SESSION['process'][$this->getPid()]);
         }
 
         if (is_resource($this->process)) {
-            $return_value = proc_terminate($this->process);
+            $result = proc_terminate($this->process);
             // Важно закрывать все каналы перед вызовом proc_close во избежание мёртвой блокировки
             foreach ($this->pipes as $pipe) {
                 if (is_resource($pipe)) fclose($pipe);
             }
-            $return_value2 = proc_close($this->process);
-            return $this->result = "$return_value, $return_value2";
+            $result_2 = proc_close($this->process);
+            $this->result = [$result, $result_2];
+            return true;
         }
 
         // вместо proc_terminate($this->process);
-        stripos(php_uname('s'), 'win') > -1 ? exec("taskkill /f /t /pid $pid", $this->result) : exec("kill -9 $pid", $this->result);
-        return $this->result;
+        stripos(php_uname('s'), 'win') > -1 ? exec("taskkill /f /t /pid $this->pid", $this->result) : exec("kill -9 $this->pid", $this->result);
         //posix_kill($this->pid, SIGKILL);
+        return true;
     }
     
     public function getPid() {

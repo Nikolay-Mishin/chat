@@ -10,6 +10,7 @@ define('IP_LISTEN', '0.0.0.0');
 
 define('SERVER_NAME', 'Workerman');
 define('SERVER_FILE', 'server.php');
+define('SERVER_ACTION', SERVER_NAME . '/action.php');
 define('SERVER',  SERVER_NAME . '/' . SERVER_FILE);
 
 define('SERVER_PATH', DIR . '/' . SERVER);

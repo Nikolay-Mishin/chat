@@ -7,6 +7,12 @@
 </head>
 
 <body>
+	<div id="chat-action">
+		<input type="button" id="chat-start" value="start" >
+		<input type="button" id="chat-stop" value="stop" >
+	</div>
+	<div id="result"></div>
+
 	<form id="chat" action="">
 		<div class="chat-result" id="chat-result">
 			<input type="text" name="chat-user" id="chat-user" placeholder="Name">
@@ -15,7 +21,10 @@
 		</div>
 	</form>
 
+	
+
 	<? require_once __DIR__ . '/config/config.php'; ?>
+	<? session_start(); ?>
 	<?= $Config; ?>
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	<script src="js/script.js"></script>

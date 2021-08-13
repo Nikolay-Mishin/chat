@@ -13,8 +13,8 @@ $(document).ready(function($) {
 			data: { action: target.value},
 			success: function (data, status) { // вешаем свой обработчик на функцию success
 				console.log(data);
-				data = JSON.parse(data);
-				console.log(data);
+				//data = JSON.parse(data);
+				//console.log(data);
 				$("#result").html(`${target.value}<br>${data}`);
 			}
 		})

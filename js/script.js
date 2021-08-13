@@ -8,10 +8,24 @@ function send(action, message = {}) {
 	send.socket.send(JSON.stringify(message));
 }
 
-console.log(Config);
-const { PROTOCOL, PROTOCOL_SHORT, HOST, PORT, IP_LISTEN, SERVER } = Config;
+function ajax(url, target) {
+	$.ajax({
+		type: "POST",
+		url: url, // указываем URL
+		data: { action: target.value },
+		success: function (data, status) { // вешаем свой обработчик на функцию success
+			console.log(data);
+			//data = JSON.parse(data);
+			//console.log(data);
+			$("#result").html(`${target.value}<br>${data}`);
+		}
+	})
+}
 
-$(document).ready(function($) {
+console.log(Config);
+const { PROTOCOL, PROTOCOL_SHORT, HOST, PORT, IP_LISTEN, SERVER, SERVER_ACTION } = Config;
+
+$(document).ready(function ($) {
 	//let server = "ws://chat:8090/WebForMyself/server.php",
 	//let server = `${PROTOCOL_SHORT}://${HOST}:${PORT}/${SERVER}`,
 	let server = `${PROTOCOL_SHORT}://${HOST}:${PORT}`,
@@ -52,5 +66,11 @@ $(document).ready(function($) {
 		send(message);
 
 		return false;
+	});
+
+	$("#chat-action").on('click', function(event) {
+		console.log(event.target);
+		console.log(event.target.value);
+		ajax(SERVER_ACTION, event.target);
 	});
 });

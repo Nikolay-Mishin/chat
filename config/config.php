@@ -23,8 +23,10 @@ function debug($arr, bool $die = false): void {
 	if ($die) die;
 }
 
-$constants = json_encode(get_defined_constants(true)['user']);
+$consts = json_encode(get_defined_constants(true)['user']);
 $Config = "<script>
-	const Config = $constants;
+	const Config = $consts;
 	Object.freeze(Config); // замораживает объект
 </script>";
+
+require_once dirname(__DIR__).'/vendor/autoload.php';

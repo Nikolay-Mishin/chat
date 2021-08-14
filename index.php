@@ -11,7 +11,6 @@
 		<input type="button" id="chat-start" value="start" >
 		<input type="button" id="chat-stop" value="stop" >
 	</div>
-	<div id="result"></div>
 
 	<form id="chat" action="">
 		<div class="chat-result" id="chat-result">
@@ -20,6 +19,8 @@
 			<input type="submit" value="Send" >
 		</div>
 	</form>
+
+	<div id="result"></div>
 
 	<? require_once __DIR__ . '/config/config.php'; ?>
 	<? session_start(); ?>

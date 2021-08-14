@@ -73,9 +73,6 @@ class Process {
     }
 
     public static function add(string $cmd, ?string $pkey = null, ?array $descriptorspec = null, ?string $cwd = null, ?array $env = null, ?int $terminate_after = null): ?self {
-        if (!isset($_SESSION['process'])) {
-            $_SESSION['process'] = [];
-        }
         if (self::getProcess($pkey)) return null;
         $process = new self($cmd, $pkey, $descriptorspec, $cwd, $env, $terminate_after);
         //debug($process);

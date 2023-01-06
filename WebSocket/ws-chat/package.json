@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/EvgeniiR/ws-chat#readme",
   "devDependencies": {
-    "laravel-mix": "^2.1.14",
+    "laravel-mix": "^6.0.49",
     "style-loader": "^0.23.1"
   },
   "dependencies": {
